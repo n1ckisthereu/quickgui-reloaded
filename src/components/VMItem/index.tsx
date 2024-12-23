@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import VMListItems from "@/types/VMItemType"
-import { Play, X } from "lucide-react"
+import { Play } from "lucide-react"
 
 export default function VMItem(data: VMListItems, index: number) {
   return (
@@ -13,9 +13,6 @@ export default function VMItem(data: VMListItems, index: number) {
         <div className="flex gap-2">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
             <Play className="h-3 w-3" />
-          </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <X className="h-3 w-3" />
           </Button>
         </div>
       </li>
