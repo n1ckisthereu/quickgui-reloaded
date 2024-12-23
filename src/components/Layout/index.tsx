@@ -25,8 +25,8 @@ export default function Layout() {
         </div>
         <div className="col-span-8 pl-4 flex flex-col">
           <div className="flex items-center justify-start gap-2 p-2">
-            <div className="flex items-center justify-center">
-              <span className="text-1xl">+</span>
+            <div className="bg-gray-100 w-8 rounded-full flex items-center justify-center hover:shadow-md cursor-pointer">
+              <button className="text-2xl">+</button>
             </div>
             <h1 className="text-xl font-semibold text-left">Quickgui</h1>
           </div>
