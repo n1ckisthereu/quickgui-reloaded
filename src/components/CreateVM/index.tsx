@@ -40,7 +40,8 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const BasicInfoStep = () => {
-  const { register } = useFormContext<FormData>();
+  const { register, formState: { errors } } = useFormContext<FormData>();
+
   return (
     <div className="space-y-4">
       <div>
@@ -49,6 +50,9 @@ const BasicInfoStep = () => {
           {...register("name")}
           className="mt-1 w-full rounded-md border p-2"
         />
+        {errors.name && (
+          <span className="text-sm text-red-500">{errors.name.message}</span>
+        )}
       </div>
       <div>
         <label className="block text-sm font-medium">Descrição</label>
@@ -57,7 +61,6 @@ const BasicInfoStep = () => {
           className="mt-1 w-full rounded-md border p-2"
         />
       </div>
-
     </div>
   );
 };
@@ -190,6 +193,77 @@ const SystemStep = () => {
   );
 };
 
+const ReviewStep = () => {
+  const { watch } = useFormContext<FormData>();
+  const values = watch();
+
+  const formatValue = (key: string, value: any) => {
+    if (value === undefined || value === "") return "Não definido";
+    return value;
+  };
+
+  const sections = [
+    {
+      title: "Informações Básicas",
+      fields: [
+        { label: "Nome", key: "name" },
+        { label: "Descrição", key: "description" }
+      ]
+    },
+    {
+      title: "Display",
+      fields: [
+        { label: "Tipo de Display", key: "display" },
+        { label: "GL", key: "gl" }
+      ]
+    },
+    {
+      title: "Armazenamento",
+      fields: [
+        { label: "Disk Image", key: "disk_img" },
+        { label: "ISO", key: "iso" },
+        { label: "Fixed ISO", key: "fixed_iso" }
+      ]
+    },
+    {
+      title: "Rede",
+      fields: [
+        { label: "Network", key: "network" },
+        { label: "MAC Address", key: "macaddr" }
+      ]
+    },
+    {
+      title: "Sistema",
+      fields: [
+        { label: "Sistema Operacional", key: "guest_os" },
+        { label: "UEFI", key: "uefi" },
+        { label: "TPM", key: "tpm" },
+        { label: "Secure Boot", key: "secureboot" },
+        { label: "RAM", key: "ram" },
+        { label: "CPU Cores", key: "cpu_cores" }
+      ]
+    }
+  ];
+
+  return (
+    <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
+      {sections.map((section) => (
+        <div key={section.title} className="border rounded-lg p-4 bg-white">
+          <h3 className="text-lg font-medium mb-3">{section.title}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {section.fields.map((field) => (
+              <div key={field.key} className="space-y-1">
+                <p className="text-sm font-medium text-gray-500">{field.label}</p>
+                <p className="text-sm">{formatValue(field.key, values[field.key as keyof FormData])}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 interface CreateVMProps {
   isOpen: boolean;
   onClose: () => void;
@@ -197,7 +271,7 @@ interface CreateVMProps {
 
 export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 5;
+  const totalSteps = 6; // Aumentamos para 6 passos
 
   useEffect(() => {
     if (!isOpen) {
@@ -217,7 +291,6 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
   });
 
   const renderStep = () => {
-    console.log(currentStep);
     switch (currentStep) {
       case 1:
         return <BasicInfoStep />;
@@ -229,6 +302,8 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
         return <NetworkStep />;
       case 5:
         return <SystemStep />;
+      case 6:
+        return <ReviewStep />;
       default:
         return null;
     }
@@ -246,6 +321,8 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
         return "Rede";
       case 5:
         return "Sistema";
+      case 6:
+        return "Revisar Configurações";
       default:
         return "";
     }
@@ -258,10 +335,10 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
       3: ["disk_img", "iso", "fixed_iso"],
       4: ["network", "macaddr"],
       5: ["guest_os", "uefi", "tpm", "secureboot", "ram", "cpu_cores"],
+      6: [], // Não precisa validar na revisão
     }[currentStep] || [];
 
     const isValid = await methods.trigger(fieldsToValidate as Array<keyof FormData>);
-
 
     if (isValid && currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
@@ -274,9 +351,16 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
     }
   };
 
-  const onSubmit = () => {
+  const onSubmit = (data: FormData) => {
+    console.log('Dados finais:', data);
     onClose();
     methods.reset();
+  };
+
+  const getButtonText = () => {
+    if (currentStep === totalSteps) return "Finalizar";
+    if (currentStep === totalSteps - 1) return "Revisar";
+    return "Próximo";
   };
 
   return (
@@ -286,7 +370,7 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
         methods.reset();
       }
     }}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{getStepTitle()}</DialogTitle>
         </DialogHeader>
@@ -303,7 +387,7 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
         </div>
 
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
             {renderStep()}
 
             <div className="flex justify-between mt-6">
@@ -318,23 +402,16 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
               >
                 Voltar
               </button>
-              {currentStep === totalSteps ? (
-                <button
-                  type="submit"
-                  onClick={onSubmit}
-                  className="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
-                >
-                  Finalizar
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
-                >
-                  Próximo
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={currentStep === totalSteps ? methods.handleSubmit(onSubmit) : handleNext}
+                className={`px-4 py-2 rounded-md text-sm ${currentStep === totalSteps
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+              >
+                {getButtonText()}
+              </button>
             </div>
           </form>
         </FormProvider>
