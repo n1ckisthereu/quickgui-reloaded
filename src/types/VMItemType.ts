@@ -6,6 +6,7 @@ export default interface VMListItems {
   description: string
   category?: string
   icon: string
+  status: "running" | "stopped"
   // icon: React.ReactNode;
 }
 
@@ -37,3 +38,5 @@ export interface System {
 }
 
 export type VMConfiguration = {} & Display & Storage & Network & System
+
+export type VMConfigurationFull = {} & VMListItems & Display & Storage & Network & System 

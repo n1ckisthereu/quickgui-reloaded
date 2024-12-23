@@ -9,6 +9,8 @@ import VMItem from "@/components/VMItem"
 import VMItemType from "@/types/VMItemType"
 import { Outlet, useNavigate } from "react-router-dom"
 import { Plus, Folder, MoreVertical, Settings, Download, Trash2, FolderOpen } from "lucide-react"
+import CreateVM from "@/components/CreateVM"
+import { useState } from "react"
 
 export default function Layout() {
   const operatingSystemsMock = [
@@ -21,10 +23,11 @@ export default function Layout() {
     { name: 'Raspberry Pi OS', icon: '🫐' },
   ] as VMItemType[]
 
-  const navigate = useNavigate()
+  const [vmModal, setvmModal] = useState(false)
 
   return (
     <div className="h-screen p-4">
+      <CreateVM isOpen={vmModal} onClose={() => setvmModal(false)} ></CreateVM>
       <div className="grid grid-cols-12 gap-4 h-full">
         <nav className="col-span-4 border-r pr-4">
           <div className="flex items-center justify-between mb-4">
@@ -59,7 +62,7 @@ export default function Layout() {
 
         <main className="col-span-8 pl-4 flex flex-col">
           <header className="flex items-center justify-start gap-2 p-2">
-            <Button size="icon" variant="ghost" className="rounded-full">
+            <Button size="icon" variant="ghost" className="rounded-full" onClick={() => setvmModal(true)}>
               <Plus className="h-6 w-6" />
             </Button>
             <h1 className="text-xl font-semibold">Quickgui</h1>

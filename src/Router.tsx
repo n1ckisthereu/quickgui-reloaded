@@ -14,7 +14,6 @@ const router = createBrowserRouter([
           Component: (await import('@/pages/Home')).default,
         }),
       },
-      // Você pode adicionar mais rotas aqui seguindo o mesmo padrão
       // You can add more routes 
     ],
   },
