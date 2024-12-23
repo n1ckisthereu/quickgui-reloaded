@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import VMItem from "@/components/VMItem"
 import VMItemType from "@/types/VMItemType"
-import { Outlet } from "react-router-dom"
-import { Plus } from "lucide-react"
+import { Outlet, useNavigate } from "react-router-dom"
+import { Plus, Folder, MoreVertical, Settings, Download, Trash2, FolderOpen } from "lucide-react"
 
 export default function Layout() {
   const operatingSystemsMock = [
@@ -15,11 +21,37 @@ export default function Layout() {
     { name: 'Raspberry Pi OS', icon: '🫐' },
   ] as VMItemType[]
 
+  const navigate = useNavigate()
+
   return (
     <div className="h-screen p-4">
       <div className="grid grid-cols-12 gap-4 h-full">
         <nav className="col-span-4 border-r pr-4">
-          <h2 className="text-lg font-semibold mb-4">Virtual Machines</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Virtual Machines</h2>
+            {/* Context menu to folding and configurations */}
+            <div className="flex items-center gap-2">
+              <Button size="icon" variant="ghost" className="rounded-full">
+                <Folder className="h-5 w-5" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="ghost" className="rounded-full">
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {/* Add more itens to menu context */}
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Configurações</span>
+                  </DropdownMenuItem>
+                  {/* End context menu items */}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            {/* end menu to folding and configurations */}
+          </div>
           {operatingSystemsMock.map((os, index) => (
             VMItem(os, index)
           ))}
