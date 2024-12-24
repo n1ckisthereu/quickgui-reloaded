@@ -3,7 +3,7 @@ import { useFormContext } from "react-hook-form";
 
 const ReviewStep = () => {
   const { watch } = useFormContext<virtualMachineForm>();
-  const values = watch(); // Obtém todos os valores atuais do formulário
+  const values = watch();
 
   const formatValue = (key: string, value: any) => {
     if (value === undefined || value === "") return "Não definido";

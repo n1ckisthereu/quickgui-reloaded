@@ -1,27 +1,58 @@
 import { virtualMachineForm } from "@/schemas/virtualMachineForm";
 import { useFormContext } from "react-hook-form";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+
+type DisplayType = "sdl" | "gtk" | "spice";
+type GLType = "on" | "off";
+
 const DisplayStep = () => {
-  const { register } = useFormContext<virtualMachineForm>();
+  const { setValue } = useFormContext<virtualMachineForm>();
+
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium">Display Type</label>
-        <select {...register("display")} className="mt-1 w-full rounded-md border p-2">
-          <option value="sdl">SDL</option>
-          <option value="gtk">GTK</option>
-          <option value="spice">Spice</option>
-        </select>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Label htmlFor="display">Display Type</Label>
+        <Select
+          onValueChange={(value: DisplayType) => setValue("display", value)}
+          defaultValue="sdl"
+        >
+          <SelectTrigger id="display">
+            <SelectValue placeholder="Select display type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="sdl">SDL</SelectItem>
+            <SelectItem value="gtk">GTK</SelectItem>
+            <SelectItem value="spice">Spice</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <div>
-        <label className="block text-sm font-medium">GL</label>
-        <select {...register("gl")} className="mt-1 w-full rounded-md border p-2">
-          <option value="on">On</option>
-          <option value="off">Off</option>
-        </select>
+
+      <div className="space-y-2">
+        <Label htmlFor="gl">GL (3D Acceleration)</Label>
+        <Select
+          onValueChange={(value: GLType) => setValue("gl", value)}
+          defaultValue="on"
+        >
+          <SelectTrigger id="gl">
+            <SelectValue placeholder="Select GL status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="on">On</SelectItem>
+            <SelectItem value="off">Off</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
 };
+
 
 export default DisplayStep;

@@ -1,30 +1,50 @@
-import { virtualMachineForm } from "@/schemas/virtualMachineForm";
-import { useFormContext } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { virtualMachineForm } from "@/schemas/virtualMachineForm"
+import { useFormContext } from "react-hook-form"
 
 const BasicInfoStep = () => {
-  const { register, formState: { errors } } = useFormContext<virtualMachineForm>();
+  const form = useFormContext<virtualMachineForm>()
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium">Nome</label>
-        <input
-          {...register("name")}
-          className="mt-1 w-full rounded-md border p-2"
-        />
-        {errors.name && (
-          <span className="text-sm text-red-500">{errors.name.message}</span>
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nome</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
         )}
-      </div>
-      <div>
-        <label className="block text-sm font-medium">Descrição</label>
-        <textarea
-          {...register("description")}
-          className="mt-1 w-full rounded-md border p-2"
-        />
-      </div>
-    </div>
-  );
-};
+      />
 
-export default BasicInfoStep;
+      <FormField
+        control={form.control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Descrição</FormLabel>
+            <FormControl>
+              <Textarea {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  )
+}
+
+export default BasicInfoStep

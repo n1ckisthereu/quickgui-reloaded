@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useForm, FormProvider, useFormContext } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import ReviewStep from '@/components/CreateVM/steps/Review';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { virtualMachineForm, virtualMachineSchema } from '@/schemas/virtualMachineForm';
+import { Button } from '@/components/ui/button';
 
 
 interface CreateVMProps {
@@ -145,10 +146,11 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
 
         <FormProvider {...methods}>
           <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+            {/* {renderStep()} */}
             {renderStep()}
 
             <div className="flex justify-between mt-6">
-              <button
+              <Button
                 type="button"
                 onClick={handleBack}
                 className={`px-4 py-2 rounded-md text-sm ${currentStep === 1
@@ -158,8 +160,8 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
                 disabled={currentStep === 1}
               >
                 Voltar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={currentStep === totalSteps ? methods.handleSubmit(onSubmit) : handleNext}
                 className={`px-4 py-2 rounded-md text-sm ${currentStep === totalSteps
@@ -168,7 +170,7 @@ export default function CreateVM({ isOpen, onClose }: CreateVMProps) {
                   }`}
               >
                 {getButtonText()}
-              </button>
+              </Button>
             </div>
           </form>
         </FormProvider>

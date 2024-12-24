@@ -1,24 +1,43 @@
-import { virtualMachineForm } from "@/schemas/virtualMachineForm";
 import { useFormContext } from "react-hook-form";
+import { virtualMachineForm } from "@/schemas/virtualMachineForm";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 const NetworkStep = () => {
-  const { register } = useFormContext<virtualMachineForm>();
+  const form = useFormContext<virtualMachineForm>();
+
   return (
     <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium">Network</label>
-        <input
-          {...register("network")}
-          className="mt-1 w-full rounded-md border p-2"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium">MAC Address</label>
-        <input
-          {...register("macaddr")}
-          className="mt-1 w-full rounded-md border p-2"
-        />
-      </div>
+      <FormField
+        control={form.control}
+        name="network"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Network</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="macaddr"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>MAC Address</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
     </div>
   );
 };
